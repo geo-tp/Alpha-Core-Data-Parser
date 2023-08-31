@@ -5,7 +5,6 @@ class SQLFormatter:
         string_values = ""
         for field, value in values.items():
             if isinstance(value, int):
-                value = int(value)
                 string_values += f'`{field}` = {value}, '
             else: # it's a str or a date
                 value = str(value).replace("'","\\'") # replace ' by \'
