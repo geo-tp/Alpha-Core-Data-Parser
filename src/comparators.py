@@ -1,4 +1,4 @@
-class QuestComparator:
+class ModelComparator:
 
     def __init__(self, compare_fields):
         self.compare_fields = compare_fields
@@ -6,7 +6,7 @@ class QuestComparator:
     
     def is_different(self, source_quest, foreign_quest):
         """
-        Compare if a foreign quest is different from the source entry
+        Compare if a foreign ressource is different from the source
         """
         for field in self.compare_fields:
             source_attr = getattr(source_quest, field)
@@ -29,15 +29,15 @@ class QuestComparator:
 
         return False
 
-    def choose(self, source_quest, foreign_quest):
+    def choose(self, source_model, foreign_model):
         """
-        Select which quest should be saved based on timestamp
+        Select which model should be saved based on timestamp
         """
-        if foreign_quest.parse_timestamp and\
-           foreign_quest.parse_timestamp < source_quest.parse_timestamp:
-            return foreign_quest
+        if foreign_model.parse_timestamp and\
+           foreign_model.parse_timestamp < source_model.parse_timestamp:
+            return foreign_model
         
-        return source_quest
+        return source_model
 
     def get_fields_to_update(self, source_quest, foreign_quest):
         fields_to_update = []

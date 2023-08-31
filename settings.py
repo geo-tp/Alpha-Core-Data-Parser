@@ -1,5 +1,5 @@
 from src.views import CliView
-from src.comparators import QuestComparator
+from src.comparators import ModelComparator
 from src.formatters import SQLFormatter
 from src.models import QuestTemplate
 from src.adapters import WarcraftStrategyQuestAdapter
@@ -18,7 +18,7 @@ class Settings:
     model = QuestTemplate
     adapter = WarcraftStrategyQuestAdapter
     parser = FileParser
-    comparator = QuestComparator
+    comparator = ModelComparator
     formatter = SQLFormatter
     view = CliView
 
