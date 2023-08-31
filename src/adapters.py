@@ -87,6 +87,7 @@ class WarcraftStrategyQuestAdapter:
             if "Collect" in text:
                 items = td.find_next_sibling("td").get_text()
                 req_items, req_item_counts = self._extract_objects(ItemTemplate, items)
+                print("REQ ITEMS", req_item_counts)
                 for i in range(len(req_items)):
                     setattr(quest_template, f"ReqItemId{i+1}", req_items[i])
                     setattr(quest_template, f"ReqItemCount{i+1}", req_item_counts[i])
@@ -147,10 +148,12 @@ class WarcraftStrategyQuestAdapter:
 
         names_and_count = {}
         for t in text_split:
-            match = re.search(regex, t)
+             # sometime (need effect) is present in name
+            t_mod = t.replace("(needs effect)", "")
+            match = re.search(regex, t_mod)
             count = match.group()
             name = t.replace(count, "").strip()
-            names_and_count[name] = count[1:-1] # remove parentheses
+            names_and_count[name] = int(count[1:-1]) # remove parentheses
 
         req_entries = []
         req_counts = []

@@ -32,9 +32,12 @@ class DataParseController:
             if entry > self.limit:
                 continue
 
-            if source_entry_obj and source_entry_obj:
-                if self.comparator.is_different(source_entry_obj, foreign_entry_obj):
-                    chosen_entry = self.comparator.choose(source_entry_obj, foreign_entry_obj)
+            if not source_entry_obj and not source_entry_obj:
+                continue
+
+            if self.comparator.is_different(source_entry_obj, foreign_entry_obj):
+                chosen_entry = self.comparator.choose(source_entry_obj, foreign_entry_obj)
+                if chosen_entry != source_entry_obj:
                     fields_to_update = self.comparator.get_fields_to_update(source_entry_obj, chosen_entry)
                     self._save_results(chosen_entry, fields_to_update)
 
