@@ -1,3 +1,5 @@
+from tqdm import tqdm
+
 class DataParseController:
 
     def __init__(
@@ -26,7 +28,7 @@ class DataParseController:
 
         self.view.start()
 
-        for entry, foreign_entry_obj in self.foreign_repo.items():
+        for entry, foreign_entry_obj in tqdm(self.foreign_repo.items()):
             source_entry_obj = self.source_repo.get(entry, None)
 
             if entry > self.limit:
