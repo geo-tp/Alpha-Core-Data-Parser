@@ -1,6 +1,6 @@
 from src.controllers import DataParseController
 from src.databases import MysqlDatabase
-from src.files import File
+from src.outputs import File
 from settings import Settings
 
 if __name__ == "__main__":
@@ -23,8 +23,8 @@ if __name__ == "__main__":
     parser = Settings.parser(Settings.adapter, database)
     foreign_data : list[Settings.model] = parser.parse(file_to_parse)
 
-    # RESULTS FILE
-    output_file = File(Settings.filepath_to_save_results)
+    # RESULTS
+    output = File(Settings.filepath_to_save_results)
 
     ctrl = DataParseController(
         source_data, 
@@ -33,7 +33,7 @@ if __name__ == "__main__":
         Settings.formatter,
         Settings.model,
         Settings.view,
-        output_file,
+        output,
         limit=Settings.max_id
     )
 
