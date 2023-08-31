@@ -3,6 +3,7 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 from src.models import QuestTemplate, ItemTemplate, CreatureTemplate
+import numpy as np
 
 class WarcraftStrategyQuestAdapter:
 
@@ -80,9 +81,13 @@ class WarcraftStrategyQuestAdapter:
                     td.find_next_sibling("td").get_text()
                 )
             if "Description" in text:
-                quest_template.Details = self._replace_special_chars(
-                    td.find_next_sibling("td").get_text()
-                )
+                desc = td.find_next_sibling("td")
+
+                for br in desc.find_all("br"):
+                    br.replace_with("\n")
+                
+                quest_template.Details = self._replace_special_chars(desc.get_text())
+
             if "You are given" in text:
                 src_item_name = td.find_next_sibling("td").get_text().strip()
                 quest_template.SrcItemId = self.database.get_by_name(ItemTemplate, src_item_name).entry
@@ -129,7 +134,7 @@ class WarcraftStrategyQuestAdapter:
         """
         regex = r"\d{4}-\d{2}-\d{2}" # date like 2004-10-10
         dates = re.findall(regex, text)
-        newest_date = None
+        newest_date = datetime.strptime("2004-06-01", "%Y-%m-%d").date()
 
         if dates:
             newest_date = datetime.strptime(dates[0], "%Y-%m-%d").date()
@@ -161,9 +166,20 @@ class WarcraftStrategyQuestAdapter:
         req_counts = []
         for name, count in names_and_count.items():
             req_entries.append( self.database.get_by_name(model, name).entry)
-            req_counts.append(count)
+            req_counts.append(int(count))
 
-        return req_entries, req_counts
+        return self._order_arrays(req_entries, req_counts)
+
+    def _order_arrays(self, array_value, array_count):
+        """
+        ReqItem, RewItem etc are always set asc, we need to order arrays
+        """
+        sorted_indices = np.argsort(array_value)
+        arr_value_sorted = np.array(array_value)[sorted_indices]
+        arr_count_sorted = np.array(array_count)[sorted_indices]
+
+        return arr_value_sorted.tolist(), arr_count_sorted.tolist()
+
 
     def _replace_special_chars(self, text, extended=False) -> str:
         if extended:
@@ -172,7 +188,9 @@ class WarcraftStrategyQuestAdapter:
                        .replace("( Elite )", "")\
                        .replace("( elite )", "")
 
-        return text.replace("\n", "%B")\
+        return text.strip()\
+                   .replace("\n", "%B")\
+                   .replace("<br>", "%B")\
                    .replace("<name>", "%n")\
                    .replace("[name]", "%n")\
                    .replace("[ name ]", "%n")\
@@ -184,5 +202,4 @@ class WarcraftStrategyQuestAdapter:
                    .replace("<class>", "%c")\
                    .replace("[class]", "%c")\
                    .replace("[ class ]", "%c")\
-                   .replace("< class >", "%c")\
-                    .strip()
+                   .replace("< class >", "%c")
