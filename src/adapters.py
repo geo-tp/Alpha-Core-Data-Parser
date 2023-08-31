@@ -1,7 +1,7 @@
 import re
 from datetime import datetime
 from bs4 import BeautifulSoup
-
+from tqdm import tqdm
 from src.models import QuestTemplate, ItemTemplate, CreatureTemplate
 
 class WarcraftStrategyQuestAdapter:
@@ -21,7 +21,7 @@ class WarcraftStrategyQuestAdapter:
         splitted_html = self._split_html(file_content) 
 
         parsed_quests = []
-        for content in splitted_html:
+        for content in tqdm(splitted_html):
             try:
                 quest_template = QuestTemplate()
                 html_soup = BeautifulSoup(content, features="lxml")
@@ -67,7 +67,6 @@ class WarcraftStrategyQuestAdapter:
 
     def _set_main_table_values(self, main_table, quest_template) -> None:
         tds = main_table.find_all("td")
-        timestamp_table = main_table.find_all("table")
 
         for td in tds:
             text = td.get_text()
@@ -87,7 +86,6 @@ class WarcraftStrategyQuestAdapter:
             if "Collect" in text:
                 items = td.find_next_sibling("td").get_text()
                 req_items, req_item_counts = self._extract_objects(ItemTemplate, items)
-                print("REQ ITEMS", req_item_counts)
                 for i in range(len(req_items)):
                     setattr(quest_template, f"ReqItemId{i+1}", req_items[i])
                     setattr(quest_template, f"ReqItemCount{i+1}", req_item_counts[i])
@@ -125,7 +123,7 @@ class WarcraftStrategyQuestAdapter:
         The newest date avalaible in the text
         correspond to Last Updated date if any, or Submitted date
         """
-        regex = r"\d{4}-\d{2}-\d{2}"
+        regex = r"\d{4}-\d{2}-\d{2}" # date like 2004-10-10
         dates = re.findall(regex, text)
         newest_date = None
 
