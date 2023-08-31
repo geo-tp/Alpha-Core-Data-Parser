@@ -1,33 +1,16 @@
+import time
+
 class ModelComparator:
 
     def __init__(self, compare_fields):
         self.compare_fields = compare_fields
         self._set_group_fields()
     
-    def is_different(self, source_quest, foreign_quest):
+    def is_different(self, source_model, foreign_model):
         """
         Compare if a foreign ressource is different from the source
         """
-        for field in self.compare_fields:
-            source_attr = getattr(source_quest, field)
-            foreign_attr = getattr(foreign_quest, field)
-
-            if type(source_attr) == type("string") and \
-               type(foreign_attr) == type("string"):
-                source_attr = self._get_flat_text(source_attr)
-                foreign_attr = self._get_flat_text(foreign_attr)
-
-            elif field[:-1] in self.group_fields:
-                # we need to compare all values at once in case there are not sorted
-                group_is_different = self._is_different_fields_group(source_quest, foreign_quest, field[:-1])
-                
-                if group_is_different:
-                    return True
-  
-            if  source_attr != foreign_attr:
-                return True
-
-        return False
+        return True if self.get_fields_to_update(source_model, foreign_model) else False
 
     def choose(self, source_model, foreign_model):
         """
@@ -39,44 +22,51 @@ class ModelComparator:
         
         return source_model
 
-    def get_fields_to_update(self, source_quest, foreign_quest):
+    def get_fields_to_update(self, source_model, foreign_model):
         fields_to_update = []
         for field in self.compare_fields:
-            q_value = getattr(source_quest, field)
-            f_value = getattr(foreign_quest, field)
+
+            s_value = getattr(source_model, field)
+            f_value = getattr(foreign_model, field)
+
+            if not f_value:
+                continue
+
+            if isinstance(s_value, str) and isinstance(f_value, str):
+                s_value = self._get_flat_text(s_value)
+                f_value = self._get_flat_text(f_value)
 
             # to compare all grouped fields at once
             if field[:-1] in self.group_fields:
-                group_is_different = self._is_different_fields_group(
-                    source_quest, 
-                    foreign_quest, 
-                    field[:-1]
+                s_value, f_value = self._get_group_values(
+                    source_model, foreign_model, field[:-1] 
                 )
-
-                if not group_is_different:
-                    continue
-            
-            if q_value != f_value:
+ 
+            if s_value != f_value:
                 fields_to_update.append(field)
 
         return fields_to_update
 
     def _get_flat_text(self, text):
-        return text.lower().replace(" ", "")\
-                           .replace("-", "")\
-                           .strip()
+        return text.replace(" ", "")\
+                   .replace("-", "")\
+                   .replace(".", "")\
+                   .replace(",", "")\
+                   .strip()\
+                   .lower()\
 
-    def _is_different_fields_group(self, source_quest, foreign_quest, field_group):
+    def _get_group_values(self, source_model, foreign_model, field_group):
         """
-        Compare group fields at once to avoid sorting differences
+        get group fields list
         """
-        source_group = [getattr(source_quest, f"{field_group}{i}") for i in range(1, 5)]
-        foreign_group = [getattr(source_quest,f"{field_group}{i}") for i in range(1, 5)]
+        source_group = [getattr(source_model, f"{field_group}{i}") for i in range(1, 5)].sort()
+        foreign_group = [getattr(source_model,f"{field_group}{i}") for i in range(1, 5)].sort()
+        
+        return source_group, foreign_group
 
-        if source_group.sort() != foreign_group.sort():
-            return True
-
-        return False
+    def _compare_text(self, source_text, foreign_text):
+            source_attr = self._get_flat_text(source_attr)
+            foreign_attr = self._get_flat_text(foreign_attr)
 
     def _set_group_fields(self):
         """
