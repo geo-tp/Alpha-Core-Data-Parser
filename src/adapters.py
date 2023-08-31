@@ -15,6 +15,10 @@ class WarcraftStrategyQuestAdapter:
         self.database = database
 
     def parse(self, file_content) -> list:
+        """
+        Parse HTML quests content to a list of QuestTemplate
+        """
+
         self.database.connect()
 
         # We split html to be able to extract data quest by quest
@@ -57,7 +61,7 @@ class WarcraftStrategyQuestAdapter:
             text = td.get_text()
             if "Level" in text:
                 # the next td is the value
-                quest_template.QuestLevel = td.find_next_sibling("td").get_text()
+                quest_template.QuestLevel = int(td.find_next_sibling("td").get_text())
             if "Previous Quest" in text:
                 quest_name = td.find_next_sibling("td").get_text().strip()
                 quest_template.PrevQuestId = self.database.get_by_title(QuestTemplate, quest_name).entry

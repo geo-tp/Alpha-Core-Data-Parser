@@ -2,6 +2,11 @@ from tqdm import tqdm
 
 class DataParseController:
 
+    """
+    Compare entries from Source data with Foreign Data
+    Save the results on the given output with the given formatter
+    """
+
     def __init__(
         self, 
         source_data, 
