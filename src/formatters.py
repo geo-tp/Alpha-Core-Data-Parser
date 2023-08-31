@@ -7,7 +7,7 @@ class SQLFormatter:
             try:
                 value = int(value)
                 string_values += f'`{field}` = {value}, '
-            except ValueError: # it's a str
+            except (ValueError, TypeError): # it's a str or a date
                 string_values += f"`{field}` = `{value}`, "
 
         # remove last ", "

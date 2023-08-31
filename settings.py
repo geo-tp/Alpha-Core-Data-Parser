@@ -72,5 +72,6 @@ class Settings:
         "RewItemCount3",
         "RewItemCount4",
         "RewXP",
+        "parse_timestamp"
     ]
     
