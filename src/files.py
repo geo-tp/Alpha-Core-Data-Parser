@@ -1,3 +1,4 @@
+from os import path
 
 class File:
     def __init__(self, filepath):
@@ -11,6 +12,9 @@ class File:
         return self.content  
 
     def save(self, content, method="w"):
+        if not path.exists(self.filepath):
+            method = "w"
+
         self.content = content
         with open(self.filepath, method) as f:
             f.write(content)
