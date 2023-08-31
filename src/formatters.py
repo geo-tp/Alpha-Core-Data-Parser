@@ -4,11 +4,12 @@ class SQLFormatter:
     def get(table_name, entry, values):
         string_values = ""
         for field, value in values.items():
-            try:
+            if isinstance(value, int):
                 value = int(value)
                 string_values += f'`{field}` = {value}, '
-            except (ValueError, TypeError): # it's a str or a date
-                string_values += f"`{field}` = `{value}`, "
+            else: # it's a str or a date
+                value = str(value).replace("'","\\'") # replace ' by \'
+                string_values += f"`{field}` = '{value}', "
 
         # remove last ", "
         string_values = string_values[:-2]
