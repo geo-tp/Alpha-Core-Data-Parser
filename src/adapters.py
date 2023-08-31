@@ -180,4 +180,5 @@ class WarcraftStrategyQuestAdapter:
                    .replace("<class>", "%c")\
                    .replace("[class]", "%c")\
                    .replace("[ class ]", "%c")\
-                   .replace("< class >", "%c")
+                   .replace("< class >", "%c")\
+                    .strip()
