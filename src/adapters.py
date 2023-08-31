@@ -189,17 +189,17 @@ class WarcraftStrategyQuestAdapter:
                        .replace("( elite )", "")
 
         return text.strip()\
-                   .replace("\n", "%B")\
-                   .replace("<br>", "%B")\
-                   .replace("<name>", "%n")\
-                   .replace("[name]", "%n")\
-                   .replace("[ name ]", "%n")\
-                   .replace("< name >", "%n")\
-                   .replace("<race>", "%r")\
-                   .replace("[race]", "%r")\
-                   .replace("[ race ]", "%r")\
-                   .replace("< race >", "%r")\
-                   .replace("<class>", "%c")\
-                   .replace("[class]", "%c")\
-                   .replace("[ class ]", "%c")\
-                   .replace("< class >", "%c")
+                   .replace("\n", "$B")\
+                   .replace("<br>", "$B")\
+                   .replace("<name>", "$n")\
+                   .replace("[name]", "$n")\
+                   .replace("[ name ]", "$n")\
+                   .replace("< name >", "$n")\
+                   .replace("<race>", "$r")\
+                   .replace("[race]", "$r")\
+                   .replace("[ race ]", "$r")\
+                   .replace("< race >", "$r")\
+                   .replace("<class>", "$c")\
+                   .replace("[class]", "$c")\
+                   .replace("[ class ]", "$c")\
+                   .replace("< class >", "$c")
