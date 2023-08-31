@@ -8,7 +8,7 @@ class SQLFormatter:
                 value = int(value)
                 string_values += f'`{field}` = {value}, '
             except ValueError: # it's a str
-                string_values += f'`{field}` = "{value}", '
+                string_values += f"`{field}` = `{value}`, "
 
         # remove last ", "
         string_values = string_values[:-2]
