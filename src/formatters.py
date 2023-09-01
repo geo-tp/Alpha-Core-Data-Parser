@@ -10,4 +10,4 @@ class SQLFormatter:
                 value = str(value).replace("'","\\'") # replace ' by \'
                 string_values += f"`{field}` = '{value}', "
 
-        return f"UPDATE `{table_name}` SET `parse_timestamp`='{timestamp}' {string_values}WHERE `entry` = {entry};\n"
+        return f"UPDATE `{table_name}` SET `parse_timestamp`='{timestamp}', {string_values}WHERE `entry` = {entry};\n"
