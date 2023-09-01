@@ -64,11 +64,16 @@ class WarcraftStrategyQuestAdapter:
                 # the next td is the value
                 quest_template.QuestLevel = int(td.find_next_sibling("td").get_text())
             if "Previous Quest" in text:
-                quest_name = td.find_next_sibling("td").get_text().strip()
-                quest_template.PrevQuestId = self.database.get_by_title(QuestTemplate, quest_name).entry
+                p_quest_td = td.find_next_sibling("td")
+                p_quest_a = p_quest_td.find("a", href=True)
+                quest_template.PrevQuestId = self._extract_entry_from_link(p_quest_a["href"])
             if "Next Quest" in text:
-                quest_name = td.find_next_sibling("td").get_text().strip()
-                quest_template.NextQuestId = self.database.get_by_title(QuestTemplate, quest_name).entry
+                # We cant parse Next Quest because there is no way
+                # to make a difference between NextQuestId and NextQuestInChain
+                pass
+                # n_quest_td = td.find_next_sibling("td")
+                # n_quest_a = n_quest_td.find("a", href=True)
+                # quest_template.NextQuestId = self._extract_entry_from_link(n_quest_a["href"])
 
     def _set_main_table_values(self, main_table, quest_template) -> None:
         tds = main_table.find_all("td")
@@ -82,12 +87,9 @@ class WarcraftStrategyQuestAdapter:
                 )
             if "Description" in text:
                 desc = td.find_next_sibling("td")
-
                 for br in desc.find_all("br"):
                     br.replace_with("\n")
-                
                 quest_template.Details = self._replace_special_chars(desc.get_text())
-
             if "You are given" in text:
                 src_item_name = td.find_next_sibling("td").get_text().strip()
                 quest_template.SrcItemId = self.database.get_by_name(ItemTemplate, src_item_name).entry
@@ -126,6 +128,10 @@ class WarcraftStrategyQuestAdapter:
     def _extract_entry(self, html) -> int:
         div = html.find("div") # there is always only one div
         return int(str(html).split("QuestId=")[1].split("</div")[0])
+
+    def _extract_entry_from_link(self, link) -> str:
+        end_link = link.split("php?").pop()
+        return int(end_link.split("=").pop())
 
     def _extract_date(self, text) -> datetime.date:
         """

@@ -3,7 +3,7 @@ import mysql.connector
 from mysql.connector import errorcode
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
-from models import QuestTemplate
+from src.models import QuestTemplate
 
 class MysqlDatabase:
 
@@ -46,9 +46,3 @@ class MysqlDatabase:
             return True
 
         return False
-
-d = MysqlDatabase()
-d.connect()
-
-print(d.has_multiple_entry(QuestTemplate,"Gol'dir"))
-d.close()
