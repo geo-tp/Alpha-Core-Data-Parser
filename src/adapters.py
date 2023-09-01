@@ -46,8 +46,8 @@ class WarcraftStrategyQuestAdapter:
                 parsed_quests.append(quest_template)
 
             except AttributeError:
-                #  an entry was not found in database (too high, incorrect name...)
-                #  Better to not update anything in this case
+                # an entry was not found in database (too high, incorrect name...)
+                # Better to not update anything in this case
                 continue
 
         self.database.close()
@@ -71,20 +71,17 @@ class WarcraftStrategyQuestAdapter:
                 # We cant parse Next Quest because there is no way
                 # to make a difference between NextQuestId and NextQuestInChain
                 pass
-                # n_quest_td = td.find_next_sibling("td")
-                # n_quest_a = n_quest_td.find("a", href=True)
-                # quest_template.NextQuestId = self._extract_entry_from_link(n_quest_a["href"])
-
+            
     def _set_main_table_values(self, main_table, quest_template) -> None:
         tds = main_table.find_all("td")
 
         for td in tds:
             text = td.get_text()
             if "Objectives" in text:
-                # the next td is the value
-                quest_template.Objectives = self._replace_special_chars(
-                    td.find_next_sibling("td").get_text()
-                )
+                obj = td.find_next_sibling("td")
+                for br in obj.find_all("br"):
+                    br.replace_with("\n")
+                quest_template.Objectives = self._replace_special_chars(obj.get_text())
             if "Description" in text:
                 desc = td.find_next_sibling("td")
                 for br in desc.find_all("br"):
@@ -174,18 +171,7 @@ class WarcraftStrategyQuestAdapter:
             req_entries.append( self.database.get_by_name(model, name).entry)
             req_counts.append(int(count))
 
-        return self._order_arrays(req_entries, req_counts)
-
-    def _order_arrays(self, array_value, array_count):
-        """
-        ReqItem, RewItem etc are always set asc, we need to order arrays
-        """
-        sorted_indices = np.argsort(array_value)
-        arr_value_sorted = np.array(array_value)[sorted_indices]
-        arr_count_sorted = np.array(array_count)[sorted_indices]
-
-        return arr_value_sorted.tolist(), arr_count_sorted.tolist()
-
+        return req_entries, req_counts
 
     def _replace_special_chars(self, text, extended=False) -> str:
         if extended:
