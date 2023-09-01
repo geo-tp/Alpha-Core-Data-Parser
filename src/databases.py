@@ -3,7 +3,7 @@ import mysql.connector
 from mysql.connector import errorcode
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
-from src.models import QuestTemplate
+from models import QuestTemplate
 
 class MysqlDatabase:
 
@@ -38,3 +38,17 @@ class MysqlDatabase:
 
     def get_by_title(self, model, title):
         return self.database_session.query(model).filter_by(Title=title).first()
+
+    def has_multiple_entry(self, model, name):
+        results = [r for r in self.database_session.query(model).filter_by(Title=name)]
+        
+        if len(results) > 1:
+            return True
+
+        return False
+
+d = MysqlDatabase()
+d.connect()
+
+print(d.has_multiple_entry(QuestTemplate,"Gol'dir"))
+d.close()
