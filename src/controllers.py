@@ -57,6 +57,7 @@ class DataParseController:
         table_name = data_model.get_table_name()
         entry = data_model.entry
         values = data_model.get_values(fields_to_update)
-        formatted_values = self.formatter.get(table_name, entry, values)
+        timestamp = data_model.parse_timestamp
+        formatted_values = self.formatter.get(table_name, entry, values, timestamp)
 
         self.output.save(formatted_values, 'a')
