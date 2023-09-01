@@ -57,16 +57,15 @@ class ModelComparator:
 
     def _get_group_values(self, source_model, foreign_model, field_group):
         """
-        get group fields list
+        get lists of group fields values
         """
-        source_group = [getattr(source_model, f"{field_group}{i}") for i in range(1, 5)].sort()
-        foreign_group = [getattr(source_model,f"{field_group}{i}") for i in range(1, 5)].sort()
-        
-        return source_group, foreign_group
+        source_group = [getattr(source_model, f"{field_group}{i}") for i in range(1, 5)]
+        foreign_group = [getattr(foreign_model,f"{field_group}{i}") for i in range(1, 5)]
+        foreign_group = [v if v != None else 0 for v in foreign_group]
+        source_group.sort()
+        foreign_group.sort()
 
-    def _compare_text(self, source_text, foreign_text):
-            source_attr = self._get_flat_text(source_attr)
-            foreign_attr = self._get_flat_text(foreign_attr)
+        return source_group, foreign_group
 
     def _set_group_fields(self):
         """
