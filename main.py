@@ -1,6 +1,6 @@
 from src.controllers import DataParseController
 from src.databases import MysqlDatabase
-from src.outputs import File
+from src.io import File
 from settings import Settings
 
 if __name__ == "__main__":
