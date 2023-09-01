@@ -39,7 +39,7 @@ class DataParseController:
             if self.limit and entry > self.limit:
                 continue
 
-            if not source_entry_obj and not source_entry_obj:
+            if not source_entry_obj:
                 continue
 
             if self.comparator.is_different(source_entry_obj, foreign_entry_obj):
