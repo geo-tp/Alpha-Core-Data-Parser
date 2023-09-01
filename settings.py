@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from src.views import CliView
 from src.comparators import ModelComparator
 from src.formatters import SQLFormatter
@@ -23,6 +25,7 @@ class Settings:
     view = CliView
 
     max_id = 1339
+    general_timestamp = datetime.strptime("2004-06-01", "%Y-%m-%d").date()
 
     compare_fields = [
         "entry",

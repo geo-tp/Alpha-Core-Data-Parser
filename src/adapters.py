@@ -12,7 +12,8 @@ class WarcraftStrategyQuestAdapter:
     https://crawler.thealphaproject.eu/mnt/crawler/media/Database/WarcraftStrategy/quest_details_june_2004.html
     """
 
-    def __init__(self, database):
+    def __init__(self, general_timestamp, database):
+        self.general_timestamp = general_timestamp
         self.database = database
 
     def parse(self, file_content) -> list:
@@ -147,7 +148,7 @@ class WarcraftStrategyQuestAdapter:
         """
         regex = r"\d{4}-\d{2}-\d{2}" # date like 2004-10-10
         dates = re.findall(regex, text)
-        newest_date = datetime.strptime("2004-06-01", "%Y-%m-%d").date()
+        newest_date = self.general_timestamp
 
         if dates:
             newest_date = datetime.strptime(dates[0], "%Y-%m-%d").date()
