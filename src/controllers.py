@@ -16,7 +16,7 @@ class DataParseController:
         model, 
         view,
         output,
-        limit=0
+        limit=None
         ):
 
         self.comparator = comparator
@@ -36,7 +36,7 @@ class DataParseController:
         for entry, foreign_entry_obj in tqdm(self.foreign_repo.items()):
             source_entry_obj = self.source_repo.get(entry, None)
 
-            if entry > self.limit:
+            if self.limit and entry > self.limit:
                 continue
 
             if not source_entry_obj and not source_entry_obj:
