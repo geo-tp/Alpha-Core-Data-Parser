@@ -94,27 +94,37 @@ class WarcraftStrategyQuestAdapter:
             if "Collect" in text:
                 items = td.find_next_sibling("td").get_text()
                 req_items, req_item_counts = self._extract_objects(ItemTemplate, items)
-                for i in range(len(req_items)):
-                    setattr(quest_template, f"ReqItemId{i+1}", req_items[i])
-                    setattr(quest_template, f"ReqItemCount{i+1}", req_item_counts[i])
+                self._set_group_values(
+                    quest_template, "ReqItemId", "ReqItemCount", req_items, req_item_counts
+                )
             if "Slay" in text:
                 mobs = td.find_next_sibling("td").get_text()
                 req_mobs, req_mob_counts = self._extract_objects(CreatureTemplate, mobs)
-                for i in range(len(req_mobs)):
-                    setattr(quest_template, f"ReqCreatureOrGOId{i+1}", req_mobs[i])
-                    setattr(quest_template, f"ReqCreatureOrGOCount{i+1}", req_mob_counts[i])
+                self._set_group_values(
+                    quest_template, "ReqCreatureOrGOId", "ReqCreatureOrGOCount", req_mobs, req_mob_counts
+                )
             if "Choose one of" in text:
                 items = td.find_next_sibling("td").get_text()
                 choose_items, choose_item_counts = self._extract_objects(ItemTemplate, items)
-                for i in range(len(choose_items)):
-                    setattr(quest_template, f"RewChoiceItemId{i+1}", choose_items[i])
-                    setattr(quest_template, f"RewChoiceItemCount{i+1}", choose_item_counts[i])
+                self._set_group_values(
+                    quest_template, "RewChoiceId", "RewChoiceCount", choose_items, choose_item_counts
+                )
             if "You will receive" in text:
                 items = td.find_next_sibling("td").get_text()
                 rew_items, rew_item_counts = self._extract_objects(ItemTemplate, items)
-                for i in range(len(rew_items)):
-                    setattr(quest_template, f"RewItem{i+1}", rew_items[i])
-                    setattr(quest_template, f"RewItemCount{i+1}", rew_item_counts[i])
+                self._set_group_values(
+                    quest_template, "RewItemId", "RewItemCount", rew_items, rew_item_counts
+                )
+
+    def _set_group_values(self, quest_template, field_value, field_count, values, counts):
+        while len(values) < 4:
+            values.append(0)
+            counts.append(0)
+
+        for i in range(4):
+            setattr(quest_template, f"{field_value}{i+1}", values[i])
+            setattr(quest_template, f"{field_count}{i+1}", counts[i])
+
 
     def _format_date(self, date) -> str:
         return date.split(" ")[0]
