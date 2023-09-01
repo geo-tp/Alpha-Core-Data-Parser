@@ -29,7 +29,7 @@ class ModelComparator:
             s_value = getattr(source_model, field)
             f_value = getattr(foreign_model, field)
 
-            if not f_value:
+            if f_value == None:
                 continue
 
             if isinstance(s_value, str) and isinstance(f_value, str):
@@ -38,10 +38,12 @@ class ModelComparator:
 
             # to compare all grouped fields at once
             if field[:-1] in self.group_fields:
-                s_value, f_value = self._get_group_values(
+                s_group, f_group = self._get_group_values(
                     source_model, foreign_model, field[:-1] 
                 )
- 
+                if s_group == f_group:
+                    continue
+
             if s_value != f_value:
                 fields_to_update.append(field)
 
