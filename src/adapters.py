@@ -116,6 +116,15 @@ class WarcraftStrategyQuestAdapter:
                 self._set_group_values(
                     quest_template, "RewItemId", "RewItemCount", rew_items, rew_item_counts
                 )
+            if "Coins:" in text:
+                money = td.find_next_sibling("td").get_text().strip()
+                money_split = money.split("\xa0\xa0")
+                mul = 100 if int(money_split[0]) < 49 else 1
+                quest_template.RewOrReqMoney = int(money_split[0]) * mul 
+
+                if (len(money_split) == 2):
+                    quest_template.ReqOrRewMoney += int(money_split[1])
+
 
     def _set_group_values(self, quest_template, field_value, field_count, values, counts):
         while len(values) < 4:
